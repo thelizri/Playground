@@ -1,0 +1,3 @@
+[submodule "Flutter"]
+	path = Flutter
+	url = https://github.com/thelizri/Flutter
