@@ -43,6 +43,27 @@ def post_store():
     return new_store, 201
 
 
+@app.put("/store/<string:store_id>")
+def update_store(store_id):
+    store_data = request.get_json()
+    try:
+        store = stores[store_id]
+        store |= store_data
+
+        return store
+    except KeyError:
+        abort(404, message="Item not found")
+
+
+@app.delete("/store/<string:store_id>")
+def delete_store(store_id):
+    try:
+        del stores[store_id]
+        return {"message": "Store deleted"}
+    except KeyError:
+        abort(404, message="Store not found")
+
+
 # Methods for retrieving items and posting items
 @app.get("/item")
 def get_all_items():
