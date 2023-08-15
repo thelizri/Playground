@@ -26,12 +26,15 @@ def post_store():
 
     # Validating required arguments
     if "name" not in store_data:
-        abort(400, "Bad request. Make sure 'name' is included in the JSON payload.")
+        abort(
+            400,
+            message="Bad request. Make sure 'name' is included in the JSON payload.",
+        )
 
     # Checking if store already exist
     for store in stores.values():
         if store_data["name"] == store["name"]:
-            abort(400, "Store already exist.")
+            abort(400, message="Store already exist.")
 
     # Adding new store
     store_id = uuid.uuid4().hex
@@ -66,7 +69,7 @@ def post_item_to_store():
     ):
         abort(
             400,
-            "Bad request. Make sure 'price', 'store_id', and 'name' are included in the JSON payload.",
+            message="Bad request. Make sure 'price', 'store_id', and 'name' are included in the JSON payload.",
         )
 
     # Checking if item already exist
@@ -75,16 +78,25 @@ def post_item_to_store():
             item_data["name"] == item["name"]
             and item_data["store_id"] == item["store_id"]
         ):
-            abort(
-                400,
-                "Item already exists",
-            )
+            abort(400, message="Bad request. Item already exists.")
 
     # Adding new item
     item_id = uuid.uuid4().hex
     new_item = {**item_data, "id": item_id}
     items[item_id] = new_item
     return new_item, 201
+
+
+@app.put("/item/<string:item_id>")
+def update_item(item_id):
+    item_data = request.get_json()
+    try:
+        item = items[item_id]
+        item |= item_data
+
+        return item
+    except KeyError:
+        abort(404, message="Item not found")
 
 
 @app.delete("/item/<string:item_id>")
