@@ -22,3 +22,7 @@ items = {
     "7": {"name": "Milk", "price": 2.00, "id": "7", "store_id": "1"},
     "8": {"name": "Bread", "price": 1.50, "id": "8", "store_id": "1"},
 }
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
