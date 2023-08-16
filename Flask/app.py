@@ -95,14 +95,17 @@ def delete_store(store_id):
 # Methods for retrieving items and posting items
 @app.get("/item")
 def get_all_items():
-    return {"items": list(items.values())}
+    items = ItemModel.query.all()
+    items_list = [item.get_dict() for item in items]
+    return {"items": items_list}
 
 
-@app.get("/item/<string:item_id>")
+@app.get("/item/<int:item_id>")
 def get_item(item_id):
-    try:
-        return items[item_id]
-    except KeyError:
+    item = ItemModel.query.get(item_id)
+    if item:
+        return item.get_dict()
+    else:
         abort(404, message="Item not found")
 
 
@@ -121,37 +124,38 @@ def post_item_to_store():
             message="Bad request. Make sure 'price', 'store_id', and 'name' are included in the JSON payload.",
         )
 
-    # Checking if item already exist
-    for item in items.values():
-        if (
-            item_data["name"] == item["name"]
-            and item_data["store_id"] == item["store_id"]
-        ):
-            abort(400, message="Bad request. Item already exists.")
-
-    # Adding new item
-    item_id = uuid.uuid4().hex
-    new_item = {**item_data, "id": item_id}
-    items[item_id] = new_item
-    return new_item, 201
+    new_item = ItemModel(
+        name=item_data["name"], price=item_data["price"], store_id=item_data["store_id"]
+    )
+    db.session.add(new_item)
+    db.session.commit()
+    return new_item.get_dict(), 201
 
 
-@app.put("/item/<string:item_id>")
+@app.put("/item/<int:item_id>")
 def update_item(item_id):
+    existing_item = ItemModel.query.get(item_id)
+    if existing_item is None:
+        abort(404, message="Item not found")
+
     item_data = request.get_json()
-    try:
-        item = items[item_id]
-        item |= item_data
+    if "name" in item_data:
+        existing_item.name = item_data["name"]
+    if "price" in item_data:
+        existing_item.price = item_data["price"]
+    if "store_id" in item_data:
+        existing_item.store_id = item_data["store_id"]
 
-        return item
-    except KeyError:
-        abort(404, message="Item not found")
+    db.session.commit()
+    return existing_item.get_dict()
 
 
-@app.delete("/item/<string:item_id>")
+@app.delete("/item/<int:item_id>")
 def delete_item(item_id):
-    try:
-        del items[item_id]
-        return {"message": "Item deleted"}
-    except KeyError:
+    existing_item = ItemModel.query.get(item_id)
+    if existing_item is None:
         abort(404, message="Item not found")
+
+    db.session.delete(existing_item)
+    db.session.commit()
+    return {"message": f"Item with ID {item_id} has been deleted"}
