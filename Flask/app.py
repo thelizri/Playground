@@ -27,14 +27,21 @@ app = create_app()
 # Methods for retrieving stores and posting stores
 @app.get("/store")
 def get_stores():
-    return {"stores": list(stores.values())}
+    # Query all stores from the database
+    store_objects = StoreModel.query.all()
+
+    # Convert the list of StoreModel objects to a list of dictionaries
+    stores_list = [store.get_dict() for store in store_objects]
+
+    return {"stores": stores_list}
 
 
-@app.get("/store/<string:store_id>")
+@app.get("/store/<int:store_id>")
 def get_store(store_id):
-    try:
-        return stores[store_id]
-    except KeyError:
+    store = StoreModel.query.get(store_id)
+    if store:
+        return store.get_dict()
+    else:
         abort(404, message="Store not found")
 
 
@@ -43,43 +50,46 @@ def post_store():
     store_data = request.get_json()
 
     # Validating required arguments
-    if "name" not in store_data:
+    if "name" not in store_data or "address" not in store_data:
         abort(
             400,
-            message="Bad request. Make sure 'name' is included in the JSON payload.",
+            message="Bad request. Make sure 'name' and 'address' is included in the JSON payload.",
         )
 
-    # Checking if store already exist
-    for store in stores.values():
-        if store_data["name"] == store["name"]:
-            abort(400, message="Store already exist.")
+    new_store = StoreModel(name=store_data["name"], address=store_data["address"])
+    db.session.add(new_store)
+    db.session.commit()
 
-    # Adding new store
-    store_id = uuid.uuid4().hex
-    new_store = {**store_data, "id": store_id}
-    stores[store_id] = new_store
-    return new_store, 201
+    return new_store.get_dict(), 201
 
 
-@app.put("/store/<string:store_id>")
+@app.put("/store/<int:store_id>")
 def update_store(store_id):
     store_data = request.get_json()
-    try:
-        store = stores[store_id]
-        store |= store_data
 
-        return store
-    except KeyError:
-        abort(404, message="Item not found")
-
-
-@app.delete("/store/<string:store_id>")
-def delete_store(store_id):
-    try:
-        del stores[store_id]
-        return {"message": "Store deleted"}
-    except KeyError:
+    existing_store = StoreModel.query.get(store_id)
+    if existing_store is None:
         abort(404, message="Store not found")
+
+    if "name" in store_data:
+        existing_store.name = store_data["name"]
+    if "address" in store_data:
+        existing_store.address = store_data["address"]
+
+    db.session.commit()
+    return existing_store.get_dict()
+
+
+@app.delete("/store/<int:store_id>")
+def delete_store(store_id):
+    existing_store = StoreModel.query.get(store_id)
+    if existing_store is None:
+        abort(404, message="Store not found")
+
+    db.session.delete(existing_store)
+    db.session.commit()
+
+    return {"message": f"Store with ID {store_id} has been deleted"}
 
 
 # Methods for retrieving items and posting items
