@@ -11,3 +11,8 @@ class ItemModel(db.Model):
         db.Integer, db.ForeignKey("stores.id"), unique=False, nullable=False
     )
     store = db.relationship("StoreModel", back_populates="items")
+
+    def __init__(self, name, price, store_id):
+        self.name = name
+        self.price = price
+        self.store_id = store_id
