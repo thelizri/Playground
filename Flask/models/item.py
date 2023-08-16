@@ -18,9 +18,4 @@ class ItemModel(db.Model):
         self.store_id = store_id
 
     def get_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "price": self.price,
-            "store_id": self.store_id,
-        }
+        return {"id": self.id, "name": self.name, "store_id": self.store_id}

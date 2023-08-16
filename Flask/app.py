@@ -2,8 +2,7 @@ from flask import Flask, request
 from flask_smorest import abort
 from flask_sqlalchemy import SQLAlchemy
 from models import StoreModel, ItemModel
-from db import db, stores, items
-import uuid
+from db import db
 
 
 def create_app():
@@ -55,6 +54,9 @@ def post_store():
             400,
             message="Bad request. Make sure 'name' and 'address' is included in the JSON payload.",
         )
+
+    if StoreModel.query.filter_by(name=store_data["name"]).first():
+        abort(400, message="Store already exists.")
 
     new_store = StoreModel(name=store_data["name"], address=store_data["address"])
     db.session.add(new_store)
@@ -123,6 +125,9 @@ def post_item_to_store():
             400,
             message="Bad request. Make sure 'price', 'store_id', and 'name' are included in the JSON payload.",
         )
+
+    if ItemModel.query.filter_by(name=item_data["name"]).first():
+        abort(400, "Item already exists.")
 
     new_item = ItemModel(
         name=item_data["name"], price=item_data["price"], store_id=item_data["store_id"]
