@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
 
 months = {
     "january": "It's cold outside. Wear a jacket.",
@@ -16,7 +17,15 @@ months = {
     "december": "Holiday season. Spend time with loved ones and spread cheer.",
 }
 
+
 # Create your views here.
+def index(request):
+    list_items = ""
+    keys = list(months.keys())
+    for month in keys:
+        redirect_path = reverse("monthly_challenge", args=[month])
+        list_items += f"<li><a href='{redirect_path}'>{month.capitalize()}</a></li>"
+    return HttpResponse(f"<h2><ul>{list_items}</ul></h2>")
 
 
 def monthly_challenge(request, month):
@@ -31,6 +40,7 @@ def monthly_challenge_redirect(request, month):
     try:
         keys_of_months = list(months.keys())
         redirect_month = keys_of_months[month - 1]
-        return HttpResponseRedirect("/challenges/" + redirect_month)
+        redirect_path = reverse("monthly_challenge", args=[redirect_month])
+        return HttpResponseRedirect(redirect_path)
     except:
         return HttpResponseNotFound("Number needs to be between 1-12")
