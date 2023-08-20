@@ -8,3 +8,7 @@ def index(request):
 
 def all_posts(request):
     return render(request, "my_blog/all_posts.html", {})
+
+
+def blog_post(request):
+    return render(request, "my_blog/blog_post.html", {})
