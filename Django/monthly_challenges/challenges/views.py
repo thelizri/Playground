@@ -1,5 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    Http404,
+)
 from django.urls import reverse
 from django.template.loader import render_to_string
 
@@ -34,7 +39,7 @@ def monthly_challenge(request, month):
             {"month": month, "text": challenge_text},
         )
     except:
-        return HttpResponseNotFound("Could not find that month.")
+        raise Http404()
 
 
 def monthly_challenge_redirect(request, month):
@@ -44,4 +49,4 @@ def monthly_challenge_redirect(request, month):
         redirect_path = reverse("monthly_challenge", args=[redirect_month])
         return HttpResponseRedirect(redirect_path)
     except:
-        return HttpResponseNotFound("Number needs to be between 1-12")
+        raise Http404()
