@@ -1,12 +1,9 @@
 from django.shortcuts import render
 from django.http import (
-    HttpResponse,
-    HttpResponseNotFound,
     HttpResponseRedirect,
     Http404,
 )
 from django.urls import reverse
-from django.template.loader import render_to_string
 
 months = {
     "january": "It's cold outside. Wear a jacket.",
