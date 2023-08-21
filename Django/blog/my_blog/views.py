@@ -79,7 +79,7 @@ def all_posts(request):
 def blog_post(request, slug):
     blog = None
     for post in posts:
-        if slug in post.values():
+        if slug == post["slug"]:
             blog = post
             break
     return render(request, "my_blog/blog_post.html", {"blog": blog})
