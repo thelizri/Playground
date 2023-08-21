@@ -10,15 +10,6 @@
 {% endblock %}
 
 {% block content %}
-    <header id="main-navigation">
-        <h1>
-            <a href="">William's Blog</a>   
-        </h1>
-        <nav>
-            <a href="">All Posts</a>   
-        </nav>
-    </header>
-
     <section id="welcome">
         <header>
             <img src="{% static 'my_blog/profile.jpg' %}" alt="William's Photo"/>
@@ -30,17 +21,9 @@
     <section id="latest-posts">
         <h2>Latest Posts</h2>
         <ul>
-            <li>
-                <article class="post">
-                    <a href="">
-                        <img src="{% static 'my_blog/mountains.jpg' %}" alt="Mountain Hiking"/>
-                        <div class="post__content">
-                            <h3>Mountain Hiking</h3>
-                            <p>Some dummy paragraph text.</p>
-                        </div>
-                    </a>
-                </article>
-            </li>
+            {% for post in posts %}
+                {% include 'my_blog/post.html' %}
+            {% endfor %}
         </ul>
     </section>
 

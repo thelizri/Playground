@@ -1,9 +1,29 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}
-    Blog
+    Mountain Title
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_blog/blog_post.css' %}">
 {% endblock %}
 
 {% block content %}
-    Blog
+    <section id="summary">
+        <h2>{{ blog.title }}</h2>
+        <article>
+            <img src="{% static 'my_blog/'|add:blog.image %}" alt="Post Title"/>
+            <address></address>
+            <div>
+                Last updated on <time>{{ blog.date }}</time>
+            </div>
+        </article>
+    </section>
+
+    <main>
+        <p>
+            {{ blog.content }}
+        </p>
+    </main>
 {% endblock %}
