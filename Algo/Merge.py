@@ -1,22 +1,23 @@
 def merge(arrayOne, arrayTwo):
-    result = []
+    mergedArray = []
     while len(arrayOne) > 0 and len(arrayTwo) > 0:
         if arrayOne[0] > arrayTwo[0]:
-            result.append(arrayTwo[0])
+            mergedArray.append(arrayTwo[0])
             arrayTwo.pop(0)
         else:
-            result.append(arrayOne[0])
+            mergedArray.append(arrayOne[0])
             arrayOne.pop(0)
 
+    # ArrayOne or ArrayTwo should be empty by now
     while len(arrayOne) > 0:
-        result.append(arrayOne[0])
+        mergedArray.append(arrayOne[0])
         arrayOne.pop(0)
 
     while len(arrayTwo) > 0:
-        result.append(arrayTwo[0])
+        mergedArray.append(arrayTwo[0])
         arrayTwo.pop(0)
 
-    return result
+    return mergedArray
 
 
 def mergesort(array):
