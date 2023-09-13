@@ -1,11 +1,11 @@
 def merge(array, aux, min, mid, max):
-    posOne, posTwo, auxPos = min, mid, min
+    posOne, posTwo, auxPos = min, mid + 1, min
 
     # Copy the relevant segment of the original array into the auxiliary array
-    for i in range(min, max):
+    for i in range(min, max + 1):
         aux[i] = array[i]
 
-    while posOne < mid and posTwo < max:
+    while posOne <= mid and posTwo <= max:
         if aux[posOne] > aux[posTwo]:
             array[auxPos] = aux[posTwo]
             posTwo += 1
@@ -15,19 +15,19 @@ def merge(array, aux, min, mid, max):
         auxPos += 1
 
     # ArrayOne or ArrayTwo should be empty by now
-    while posOne < mid:
+    while posOne <= mid:
         array[auxPos] = aux[posOne]
         posOne += 1
         auxPos += 1
 
-    while posTwo < max:
+    while posTwo <= max:
         array[auxPos] = aux[posTwo]
         posTwo += 1
         auxPos += 1
 
 
 def mergesort(array, aux, min, max):
-    length = max - min - 1
+    length = max - min + 1
     if length <= 1:
         return
 
@@ -35,13 +35,13 @@ def mergesort(array, aux, min, max):
 
     # Sort each half
     mergesort(array, aux, min, mid)
-    mergesort(array, aux, mid, max)
+    mergesort(array, aux, mid + 1, max)
 
     # Merge the sorted halves
     merge(array, aux, min, mid, max)
 
 
-testArray = [2, 8, 5, 3, 9, 4, 1, 7]
+testArray = [2, 8, 5, 3, 33, 9, 4, 1, 7]
 aux = [0 for _ in range(len(testArray))]
-mergesort(testArray, aux, 0, len(testArray))
+mergesort(testArray, aux, 0, len(testArray) - 1)
 print(testArray)
