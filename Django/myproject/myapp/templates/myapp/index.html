@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% include "partials/nav.html" %}
+<ul>
+    {% for month in months %}
+        <li>
+            <a href="{% url 'month' month %}">{{month|title}}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
