@@ -40,6 +40,7 @@ def index(request):
         "blog_posts/index.html",
         {
             "title": "Index",
+            "posts": dummy_blog_posts[0:3],
         },
     )
 
