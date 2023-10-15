@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 
 dummy_blog_posts = [
     {
@@ -67,3 +67,4 @@ def get_post(request, post):
                     "post": blog_post,
                 },
             )
+    raise Http404("Post not found.")

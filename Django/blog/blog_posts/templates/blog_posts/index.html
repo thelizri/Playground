@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% include 'blog_posts/navigation.html' %}
 <h1>Welcome to the index page</h1>
 
 <h2><a href="{% url 'posts' %}">All Blog Posts</a></h2>
