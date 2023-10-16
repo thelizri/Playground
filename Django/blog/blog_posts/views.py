@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
+from blog_posts.models import BlogPost
 
 dummy_blog_posts = [
     {
@@ -35,35 +36,38 @@ dummy_blog_posts = [
 
 # Create your views here.
 def index(request):
+    posts = BlogPost.objects.all()[0:3]
     return render(
         request,
         "blog_posts/index.html",
         {
             "title": "Index",
-            "posts": dummy_blog_posts[0:3],
+            "posts": posts,
         },
     )
 
 
 def all_posts(request):
+    posts = BlogPost.objects.all()
     return render(
         request,
         "blog_posts/all_posts.html",
         {
             "title": "Blog Posts",
-            "posts": dummy_blog_posts,
+            "posts": posts,
         },
     )
 
 
 def get_post(request, post):
-    for blog_post in dummy_blog_posts:
-        if blog_post["url"] == post:
+    posts = BlogPost.objects.all()
+    for blog_post in posts:
+        if blog_post.id == int(post):
             return render(
                 request,
                 "blog_posts/post.html",
                 {
-                    "title": blog_post["title"],
+                    "title": blog_post.title,
                     "post": blog_post,
                 },
             )
