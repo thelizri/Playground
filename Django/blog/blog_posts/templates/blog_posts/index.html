@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'blog_posts/styles.css' %}">
+{% endblock %}
 
 {% block content %}
 {% include 'blog_posts/navigation.html' %}
 <h1>Welcome to the index page</h1>
-
-<h2><a href="{% url 'posts' %}">All Blog Posts</a></h2>
 
 <ul>
     {% for post in posts %}
