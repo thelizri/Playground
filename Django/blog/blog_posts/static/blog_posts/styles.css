@@ -1,0 +1,156 @@
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0055a8;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+/* Navigation Styles */
+nav {
+    margin-bottom: 20px;
+}
+
+nav a {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Blog Post Styles */
+.blog-post-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.blog-post-link {
+    display: block;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    transition: background-color 0.2s;
+}
+
+.blog-post-link:hover {
+    background-color: #eee;
+}
+
+/* Single Blog Post Styles */
+.blog-post-title {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #222;
+}
+
+.blog-post-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #e1e1e1;
+    margin: 20px 0;
+}
+
+.blog-post-content {
+    font-size: 1.1em;
+    line-height: 1.7;
+    color: #444;
+}
+
+.back-to-posts {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 15px;
+    border: 1px solid #0077cc;
+    color: #0077cc;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.back-to-posts:hover {
+    background-color: #0077cc;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Header Styles */
+header {
+    background-color: #333;
+    padding: 10px 0;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 {
+    margin: 0;
+    font-size: 1.4em;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.navbar a:hover {
+    color: #ddd;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+    }
+    
+    .navbar h1 {
+        margin-bottom: 10px;
+    }
+}
