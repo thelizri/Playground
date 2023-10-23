@@ -28,16 +28,16 @@ def all_posts(request):
     )
 
 
-def get_post(request, post):
-    posts = BlogPost.objects.all()
-    for blog_post in posts:
-        if blog_post.id == int(post):
-            return render(
-                request,
-                "blog_posts/post.html",
-                {
-                    "title": blog_post.title,
-                    "post": blog_post,
-                },
-            )
-    raise Http404("Post not found.")
+def get_post(request, slug):
+    try:
+        blog_post = BlogPost.objects.get(slug=slug)
+        return render(
+            request,
+            "blog_posts/post.html",
+            {
+                "title": blog_post.title,
+                "post": blog_post,
+            },
+        )
+    except:
+        raise Http404("Post not found.")
