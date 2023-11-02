@@ -17,7 +17,12 @@ int main()
     if (pid == 0)
     {
         // This branch is executed by the child process
-        printf("I am the child!\n");
+        char *args[] = {"/bin/windlass", NULL};
+        if (execv("/bin/windlass", args) == -1)
+        {
+            perror("execv");
+            exit(1);
+        }
     }
     else
     {
