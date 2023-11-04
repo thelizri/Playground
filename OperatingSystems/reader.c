@@ -32,8 +32,8 @@ int countWords(char *str)
 // structure for message queue
 struct mesg_buffer
 {
-    long mesg_type;
-    char mesg_text[100];
+    long type;
+    char text[100];
 } message;
 
 int main()
@@ -47,16 +47,22 @@ int main()
     // msgget creates a message queue
     // and returns identifier
     msgid = msgget(key, 0666 | IPC_CREAT);
+    if (msgid == -1)
+    {
+        perror("msgget");
+        exit(EXIT_FAILURE);
+    }
+    message.type = 1;
 
     // Receive the message
-    if (msgrcv(msgid, &message, sizeof(message), message.mesg_type, 0) == -1)
+    if (msgrcv(msgid, &message, sizeof(message), message.type, 0) == -1)
     {
         perror("msgrcv");
         exit(EXIT_FAILURE);
     }
 
     // Count the number of words
-    int words = countWords(message.mesg_text);
+    int words = countWords(message.text);
     printf("Number of words is: %d\n", words);
 
     // Destroy the message queue

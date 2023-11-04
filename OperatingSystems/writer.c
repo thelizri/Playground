@@ -8,8 +8,8 @@
 // structure for message queue
 struct mesg_buffer
 {
-    long mesg_type;
-    char mesg_text[100];
+    long type;
+    char text[100];
 } message;
 
 int main()
@@ -34,7 +34,7 @@ int main()
         perror("msgget");
         exit(EXIT_FAILURE);
     }
-    message.mesg_type = 1;
+    message.type = 1;
 
     // Read content of File.txt into message
     file = fopen("/mnt/c/Users/karlw/Documents/Code/Playground/OperatingSystems/File.txt", "r");
@@ -45,7 +45,7 @@ int main()
     }
 
     // Read the entire content of the file at once
-    fread(message.mesg_text, sizeof(message.mesg_text), 1, file);
+    fread(message.text, sizeof(message.text), 1, file);
 
     // Send the message
     if (msgsnd(msgid, &message, sizeof(message), 0) == -1)
@@ -56,7 +56,6 @@ int main()
 
     // Close the file
     fclose(file);
-    exit(EXIT_SUCCESS);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
