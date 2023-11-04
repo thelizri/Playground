@@ -42,7 +42,7 @@ int main()
     int msgid;
 
     // ftok to generate unique key
-    key = ftok("/mnt/c/Users/karlw/Documents/Code/Playground/OperatingSystems/File.txt", 123);
+    key = ftok("File.txt", 123);
 
     // msgget creates a message queue
     // and returns identifier

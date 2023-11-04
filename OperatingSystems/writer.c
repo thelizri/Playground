@@ -19,7 +19,7 @@ int main()
     FILE *file;
 
     // ftok to generate unique key
-    key = ftok("/mnt/c/Users/karlw/Documents/Code/Playground/OperatingSystems/File.txt", 123);
+    key = ftok("File.txt", 123);
     if (key == -1)
     {
         perror("ftok");
@@ -37,7 +37,7 @@ int main()
     message.type = 1;
 
     // Read content of File.txt into message
-    file = fopen("/mnt/c/Users/karlw/Documents/Code/Playground/OperatingSystems/File.txt", "r");
+    file = fopen("File.txt", "r");
     if (file == NULL)
     {
         perror("fopen");
