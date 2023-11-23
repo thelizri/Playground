@@ -13,21 +13,26 @@ const int MAX = 2;
 sem_t *rw_mutex;
 sem_t *mutex;
 
-typedef struct {
+typedef struct
+{
     int VAR;
     int read_count;
 } SharedData;
 
 SharedData *shared_data;
 
-void reader_function() {
+void reader_function()
+{
 
     pid_t pid = getpid();
 
-    do {
+    do
+    {
+        sleep(1);
         sem_wait(mutex);
         shared_data->read_count++;
-        if (shared_data->read_count == 1) {
+        if (shared_data->read_count == 1)
+        {
             sem_wait(rw_mutex);
             printf("First reader aquired lock\n");
         }
@@ -38,7 +43,8 @@ void reader_function() {
 
         sem_wait(mutex);
         shared_data->read_count--;
-        if (shared_data->read_count == 0) {
+        if (shared_data->read_count == 0)
+        {
             sem_post(rw_mutex);
             printf("Last reader released lock\n");
         }
@@ -46,11 +52,14 @@ void reader_function() {
     } while (shared_data->VAR < MAX);
 }
 
-void writer_function() {
+void writer_function()
+{
 
     pid_t pid = getpid();
 
-    do {
+    do
+    {
+        sleep(1);
         sem_wait(rw_mutex);
         printf("The writer aquired the lock\n");
 
@@ -63,7 +72,8 @@ void writer_function() {
     } while (shared_data->VAR < MAX);
 }
 
-int main() {
+int main()
+{
     int shmid = shmget((key_t)2345, sizeof(SharedData), 0666 | IPC_CREAT);
     shared_data = (SharedData *)shmat(shmid, NULL, 0);
     shared_data->VAR = 0;
@@ -73,15 +83,22 @@ int main() {
     mutex = sem_open("/mutex", O_CREAT, 0666, 1);
 
     pid_t pid = fork();
-    if (pid == 0) {
+    if (pid == 0)
+    {
         writer_function();
-    } else {
+    }
+    else
+    {
         pid_t pid2 = fork();
-        if (pid2 == 0) {
-            printf("First reader(%d)\n", getpid());
+        if (pid2 == 0)
+        {
+            printf("Child reader id: (%d)\n", getpid());
             reader_function();
-        } else {
-            printf("Second reader(%d)\n", getpid());
+        }
+        else
+        {
+            sleep(1);
+            printf("Parent reader id: (%d)\n", getpid());
             reader_function();
             waitpid(pid, NULL, 0);
             waitpid(pid2, NULL, 0);
