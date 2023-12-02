@@ -49,6 +49,15 @@ void initialize_physical_memory()
     }
 }
 
+// TLB First in First Out
+void enqueue(int page_number, int frame_number)
+{
+    static int pos = 0;
+    TLB[pos].page_number = page_number;
+    TLB[pos].frame_number = frame_number;
+    pos = (pos + 1) % 16;
+}
+
 // Reads from fake disk
 int read_disk(int page, char *buffer, FILE *file)
 {
@@ -77,6 +86,21 @@ int read_disk(int page, char *buffer, FILE *file)
     next_frame += 1;
 
     return 0; // Return success
+}
+
+int check_tlb(int page_number)
+{
+    // Check the TLB for the page number
+    for (int i = 0; i < 16; i++)
+    {
+        if (TLB[i].page_number == page_number && TLB[i].valid_bit)
+        {
+            // Page found in TLB
+            int frame_number = TLB[i].frame_number;
+            return frame_number;
+        }
+    }
+    return -1;
 }
 
 int get_frame_number(int page_number)
@@ -125,12 +149,16 @@ int main()
         int page_number = logical_address >> 8;
 
         // Get virtual address
-
-        int frame_number = get_frame_number(page_number);
+        int frame_number = check_tlb(page_number);
         if (frame_number == -1)
         {
-            frame_number = next_frame;
-            read_disk(page_number, buffer, binary);
+            frame_number = get_frame_number(page_number);
+            if (frame_number == -1)
+            {
+                frame_number = next_frame;
+                read_disk(page_number, buffer, binary);
+            }
+            enqueue(page_number, frame_number);
         }
 
         int physical_address = (frame_number << 8) + offset;
@@ -139,6 +167,9 @@ int main()
         printf("Virtual address: %d, Physical address: %d, Value: %d\n", logical_address, physical_address, value);
 
         // Get physical address
+        // 1. Check TLB
+        // 2. Check page_table
+        // 3. Update TLB
         // Get value in RAM
         // Keep track of page faults
         // Keep track of TLB hit rate
