@@ -79,7 +79,8 @@ int read_disk(int page, char *buffer, FILE *file)
     return 0; // Return success
 }
 
-int get_frame_number(int page_number){
+int get_frame_number(int page_number)
+{
     // Check the page table for the page number
     for (int i = 0; i < PAGE_SIZE; i++)
     {
@@ -123,25 +124,24 @@ int main()
         int offset = logical_address & 0xFF;
         int page_number = logical_address >> 8;
 
-        //Get virtual address
+        // Get virtual address
 
         int frame_number = get_frame_number(page_number);
-        if (frame_number == -1){
+        if (frame_number == -1)
+        {
             frame_number = next_frame;
             read_disk(page_number, buffer, binary);
         }
 
-        int physical_address = (frame_number<<8) + offset;
-        int value = (int) physical_memory[frame_number][offset];
+        int physical_address = (frame_number << 8) + offset;
+        int value = (int)physical_memory[frame_number][offset];
 
         printf("Virtual address: %d, Physical address: %d, Value: %d\n", logical_address, physical_address, value);
 
-
-
-        //Get physical address
-        //Get value in RAM
-        //Keep track of page faults
-        //Keep track of TLB hit rate
+        // Get physical address
+        // Get value in RAM
+        // Keep track of page faults
+        // Keep track of TLB hit rate
     }
 
     // Close the file
