@@ -18,6 +18,9 @@ MMU_Unit page_table[256];
 char physical_memory[256][256];
 int next_frame;
 
+int page_faults;
+int tlb_hits;
+
 void initialize_TLB()
 {
     for (int i = 0; i < 16; i++)
@@ -55,6 +58,7 @@ void enqueue(int page_number, int frame_number)
     static int pos = 0;
     TLB[pos].page_number = page_number;
     TLB[pos].frame_number = frame_number;
+    TLB[pos].valid_bit = 1;
     pos = (pos + 1) % 16;
 }
 
@@ -121,6 +125,10 @@ int get_frame_number(int page_number)
 // Main function
 int main()
 {
+    tlb_hits = 0;
+    page_faults = 0;
+    int readings = 0;
+
     initialize_TLB();
     initialize_page_table();
     initialize_physical_memory();
@@ -155,10 +163,16 @@ int main()
             frame_number = get_frame_number(page_number);
             if (frame_number == -1)
             {
+                // Page Fault
                 frame_number = next_frame;
                 read_disk(page_number, buffer, binary);
+                page_faults++;
             }
             enqueue(page_number, frame_number);
+        }
+        else
+        {
+            tlb_hits++;
         }
 
         int physical_address = (frame_number << 8) + offset;
@@ -166,6 +180,7 @@ int main()
 
         printf("Virtual address: %d, Physical address: %d, Value: %d\n", logical_address, physical_address, value);
 
+        readings++;
         // Get physical address
         // 1. Check TLB
         // 2. Check page_table
@@ -174,6 +189,10 @@ int main()
         // Keep track of page faults
         // Keep track of TLB hit rate
     }
+    float tlb_hit_rate = (float)tlb_hits / readings * 100;
+    float page_fault_rate = (float)page_faults / readings * 100;
+    printf("Page faults %.1f %% \n", page_fault_rate);
+    printf("TLB Hit rate %.1f %% \n", tlb_hit_rate);
 
     // Close the file
     fclose(file);
