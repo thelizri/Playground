@@ -1,5 +1,6 @@
 #include <stdio.h>  // Standard input-output header for printf and file operations
 #include <stdlib.h> // Standard library for exit function
+#include <string.h>
 
 #define PATH_ADDRESS "lab3_data/addresses.txt"
 #define PAGE_SIZE 256
@@ -12,9 +13,41 @@ typedef struct
     int valid_bit;
 } MMU_Unit;
 
-MMU_Unit Page_Table[256];
 MMU_Unit TLB[16];
-char Page_Frame[256][256];
+MMU_Unit page_table[256];
+char physical_memory[256][256];
+int next_frame;
+
+void initialize_TLB()
+{
+    for (int i = 0; i < 16; i++)
+    {
+        TLB[i].page_number = -1;  // Indicates an invalid entry
+        TLB[i].frame_number = -1; // Indicates an invalid entry
+        TLB[i].valid_bit = 0;     // 0 indicates the entry is not valid
+    }
+}
+
+void initialize_page_table()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        page_table[i].page_number = -1;  // Indicates an invalid entry
+        page_table[i].frame_number = -1; // Indicates an invalid entry
+        page_table[i].valid_bit = 0;     // 0 indicates the entry is not valid
+    }
+}
+
+void initialize_physical_memory()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        for (int j = 0; j < 256; j++)
+        {
+            physical_memory[i][j] = 0; // Initialize each byte to 0
+        }
+    }
+}
 
 // Reads from fake disk
 int read_disk(int page, char *buffer, FILE *file)
@@ -34,22 +67,42 @@ int read_disk(int page, char *buffer, FILE *file)
         return -1; // Return an error code if read fails
     }
 
+    // Load the page into the frame
+    memcpy(physical_memory[next_frame], buffer, PAGE_SIZE);
+
+    // Update the page table
+    page_table[next_frame].page_number = page;
+    page_table[next_frame].frame_number = next_frame;
+    page_table[next_frame].valid_bit = 1;
+    next_frame += 1;
+
     return 0; // Return success
 }
 
-int load_page(int page, FILE *file){
-    //Check the page table for page number
-    //If found read page frame from Page_Frame
-    //Else read page and put it in next available frame
-    //Update the Page_table
-    //Return page
+int get_frame_number(int page_number){
+    // Check the page table for the page number
+    for (int i = 0; i < PAGE_SIZE; i++)
+    {
+        if (page_table[i].page_number == page_number && page_table[i].valid_bit)
+        {
+            // Page found in page table
+            int frame_number = page_table[i].frame_number;
+            return frame_number;
+        }
+    }
+    return -1;
 }
 
 // Main function
 int main()
 {
+    initialize_TLB();
+    initialize_page_table();
+    initialize_physical_memory();
+    next_frame = 0;
+
     FILE *file;
-    FILE *binary;             // File pointer
+    FILE *binary;           // File pointer
     char buffer[PAGE_SIZE]; // Buffer to hold each buffer of text
     char line[PAGE_SIZE];
 
@@ -58,7 +111,7 @@ int main()
     binary = fopen(DISK_ADDRESS, "rb");
 
     // Check if file opening succeeded
-    if (file == NULL)
+    if (file == NULL || binary == NULL)
     {
         perror("Error opening file"); // Print error message
         exit(EXIT_FAILURE);           // Exit program with failure status
@@ -66,10 +119,29 @@ int main()
     // Read and print each buffer of the file
     while (fgets(line, sizeof(line), file))
     {
-        int number = atoi(line); // Convert buffer to integer
-        int offset = number & 0xFF;
-        int page_number = number >> 8;
-        
+        int logical_address = atoi(line); // Convert buffer to integer
+        int offset = logical_address & 0xFF;
+        int page_number = logical_address >> 8;
+
+        //Get virtual address
+
+        int frame_number = get_frame_number(page_number);
+        if (frame_number == -1){
+            frame_number = next_frame;
+            read_disk(page_number, buffer, binary);
+        }
+
+        int physical_address = (frame_number<<8) + offset;
+        int value = (int) physical_memory[frame_number][offset];
+
+        printf("Virtual address: %d, Physical address: %d, Value: %d\n", logical_address, physical_address, value);
+
+
+
+        //Get physical address
+        //Get value in RAM
+        //Keep track of page faults
+        //Keep track of TLB hit rate
     }
 
     // Close the file
