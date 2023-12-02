@@ -178,7 +178,7 @@ int main()
         int physical_address = (frame_number << 8) + offset;
         int value = (int)physical_memory[frame_number][offset];
 
-        printf("Virtual address: %d, Physical address: %d, Value: %d\n", logical_address, physical_address, value);
+        printf("Virtual address: %d Physical address: %d Value: %d\n", logical_address, physical_address, value);
 
         readings++;
         // Get physical address
