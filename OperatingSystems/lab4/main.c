@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define CYLINDER_COUNT 100
-#define REQUEST_COUNT 5
+#define CYLINDER_COUNT 5000
+#define REQUEST_COUNT 10
 
 int fcfs(int requests[], int head);
 int sstf(int requests[], int head);
@@ -186,7 +186,8 @@ int look(int original[], int head)
         // All the requests are on the right side of the head
         return requests[REQUEST_COUNT - 1] - head;
     }
-    else if(requests[REQUEST_COUNT-1] <= head){
+    else if (requests[REQUEST_COUNT - 1] <= head)
+    {
         // All the requests are on the left side of the head
         return head - requests[0];
     }
