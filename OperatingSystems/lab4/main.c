@@ -36,23 +36,22 @@ int main(int argc, char *argv[])
     for (int i = 0; i < REQUEST_COUNT; i++)
     {
         requests[i] = rand() % CYLINDER_COUNT;
-        printf("%d ", requests[i]);
     }
 
-    // Call each scheduling function
-    /*
-    fcfs(requests, head);
-    sstf(requests, head);
-    scan(requests, head);
-    cscan(requests, head);
-    look(requests, head);
-    clook(requests, head);
-    */ 
+    printArray(requests, REQUEST_COUNT);
 
+    int sorted_copy[REQUEST_COUNT];
+    copyArray(requests, sorted_copy, REQUEST_COUNT);
+    qsort(sorted_copy, REQUEST_COUNT, sizeof(int), compareInts);
+    printArray(sorted_copy, REQUEST_COUNT);
+
+    // Call each scheduling function
     printf("\nFCFS %d\n", fcfs(requests, head));
     printf("SSTF %d\n", sstf(requests, head));
     printf("SCAN %d\n", scan(requests, head));
     printf("C-SCAN %d\n", cscan(requests, head));
+    printf("LOOK %d\n", look(requests, head));
+    printf("C-LOOK %d\n", clook(requests, head));
     return 0;
 }
 
@@ -131,7 +130,7 @@ int scan(int original[], int head)
     copyArray(original, requests, REQUEST_COUNT);
     qsort(requests, REQUEST_COUNT, sizeof(int), compareInts);
 
-    if (requests[0] > head)
+    if (requests[0] >= head)
     {
         // All the requests are on the right side of the head
         return requests[REQUEST_COUNT - 1] - head;
@@ -151,12 +150,12 @@ int cscan(int original[], int head)
     copyArray(original, requests, REQUEST_COUNT);
     qsort(requests, REQUEST_COUNT, sizeof(int), compareInts);
 
-    if (requests[0] > head)
+    if (requests[0] >= head)
     {
         // All the requests are on the right side of the head
         return requests[REQUEST_COUNT - 1] - head;
     }
-    else if (requests[REQUEST_COUNT - 1] < head)
+    else if (requests[REQUEST_COUNT - 1] <= head)
     {
         // All the requests are on the left side of the head
         return requests[REQUEST_COUNT - 1] + CYLINDER_COUNT + (CYLINDER_COUNT - head);
@@ -165,7 +164,7 @@ int cscan(int original[], int head)
     {
         for (int i = 0; i < REQUEST_COUNT; i++)
         {
-            if (requests[i] > head)
+            if (requests[i] >= head)
                 return requests[i - 1] + CYLINDER_COUNT + (CYLINDER_COUNT - head);
         }
     }
@@ -175,15 +174,65 @@ int cscan(int original[], int head)
 
 // LOOK: A variant of SCAN, the LOOK algorithm moves the disk arm only as far as the last request in each direction,
 // then reverses direction. This can be more efficient than SCAN, as it avoids unnecessary movement of the disk arm.
-int look(int requests[], int head)
+int look(int original[], int head)
 {
     // Implement LOOK algorithm
+    int requests[REQUEST_COUNT];
+    copyArray(original, requests, REQUEST_COUNT);
+    qsort(requests, REQUEST_COUNT, sizeof(int), compareInts);
+
+    if (requests[0] >= head)
+    {
+        // All the requests are on the right side of the head
+        return requests[REQUEST_COUNT - 1] - head;
+    }
+    else if(requests[REQUEST_COUNT-1] <= head){
+        // All the requests are on the left side of the head
+        return head - requests[0];
+    }
+    else
+    {
+        return (requests[REQUEST_COUNT - 1] - requests[0]) + (requests[REQUEST_COUNT - 1] - head);
+    }
+
     return 0;
 }
 // C-LOOK (Circular LOOK)**: This is similar to C-SCAN. In C-LOOK, the disk arm goes only as far as the final request in one direction,
 // then jumps back to the earliest request in the other direction. Like C-SCAN, it also tends to provide a more uniform wait time.
-int clook(int requests[], int head)
+int clook(int original[], int head)
 {
     // Implement C-LOOK algorithm
+    int requests[REQUEST_COUNT];
+    copyArray(original, requests, REQUEST_COUNT);
+    qsort(requests, REQUEST_COUNT, sizeof(int), compareInts);
+
+    if (requests[0] >= head)
+    {
+        // All the requests are on the right side of the head
+        return requests[REQUEST_COUNT - 1] - head;
+    }
+    else if (requests[REQUEST_COUNT - 1] <= head)
+    {
+        // All the requests are on the left side of the head
+        return (head - requests[0]) + (requests[REQUEST_COUNT - 1] - requests[0]);
+    }
+    else
+    {
+        for (int i = 0; i < REQUEST_COUNT; i++)
+        {
+            if (requests[i] >= head)
+            {
+                if (i > 1)
+                {
+                    return (requests[REQUEST_COUNT - 1] - head) + (requests[REQUEST_COUNT - 1] - requests[0] + requests[i - 1]);
+                }
+                else
+                {
+                    return (requests[REQUEST_COUNT - 1] - head) + (requests[REQUEST_COUNT - 1] - requests[0]);
+                }
+            }
+        }
+    }
+
     return 0;
 }
