@@ -53,26 +53,34 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+//FCFS (First Come First Served): This is the simplest type of disk scheduling algorithm. In FCFS, the disk requests are addressed in the order they are received. 
 void fcfs(int requests[], int head) {
     // Implement FCFS algorithm
 }
 
+//SSTF (Shortest Seek Time First): SSTF is a more optimized approach than FCFS. Here, the disk head moves to the request that is closest to its current position.
 void sstf(int requests[], int head) {
     // Implement SSTF algorithm
 }
 
+// SCAN (Elevator Algorithm): This algorithm works like an elevator, moving the disk arm back and forth across the disk, servicing requests in one direction until it reaches the end, 
+// and then reversing direction.
 void scan(int requests[], int head) {
     // Implement SCAN algorithm
 }
 
+// C-SCAN (Circular SCAN): Similar to SCAN, but instead of reversing direction at the ends, it jumps back to the beginning (or the other extreme) and starts scanning in the same direction again.
 void cscan(int requests[], int head) {
     // Implement C-SCAN algorithm
 }
 
+// LOOK: A variant of SCAN, the LOOK algorithm moves the disk arm only as far as the last request in each direction,
+// then reverses direction. This can be more efficient than SCAN, as it avoids unnecessary movement of the disk arm.
 void look(int requests[], int head) {
     // Implement LOOK algorithm
 }
-
+// C-LOOK (Circular LOOK)**: This is similar to C-SCAN. In C-LOOK, the disk arm goes only as far as the final request in one direction,
+// then jumps back to the earliest request in the other direction. Like C-SCAN, it also tends to provide a more uniform wait time.
 void clook(int requests[], int head) {
     // Implement C-LOOK algorithm
 }
