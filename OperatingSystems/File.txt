@@ -1,4 +1,0 @@
-Hello, this is my little file
-I'm happy you're reading from it
-This is the last line
- 
